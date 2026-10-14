@@ -485,68 +485,90 @@ Test-ComputerSecureChannel -Repair -Credential (Get-Credential)
 
 Note: This cmdlet is intended for domain member computers, not Domain Controllers.
 
+Active Directory — Domain Join & Account Management
+
+28. Testing and Repairing the Secure Channel
+
+Test Secure Channel
+
+Run PowerShell as Administrator on a domain-joined client:
+
+Test-ComputerSecureChannel
+
+* True: The secure channel is working.
+* False: The secure channel may be broken.
+
+Repair Secure Channel
+
+Test-ComputerSecureChannel -Repair -Credential (Get-Credential)
+
+* Prompts for domain credentials and attempts to repair the secure channel.
+* Use when troubleshooting a suspected domain trust issue.
+* Note: This cmdlet is intended for domain member computers, not Domain Controllers.
+
 29. Pre-staging Computer Accounts
 
-Why Create a Computer Account Before Domain Join?
+Purpose
 
-Pre-staging creates the computer object in Active Directory before the client joins the domain. This allows administrators to place it in the correct OU and prepare account permissions in advance.
+Create a computer account in Active Directory before the client joins the domain.
 
-Create a Computer Account
+Procedure
 
 1. Open Server Manager → Tools → Active Directory Users and Computers.
-2. Select the target OU.
-3. Right-click → New → Computer.
+2. Select the target Organizational Unit (OU).
+3. Right-click the OU → New → Computer.
 4. Enter the computer name (e.g., PC-01).
 5. Select OK.
 
-Set the Default Computer Container
+Set the Default Computer Account Location
 
-Run the following command on a Domain Controller in an elevated Command Prompt:
+Run the following command in an elevated Command Prompt on a Domain Controller:
 
 redircmp "OU=Workstations,DC=corp,DC=example,DC=com"
 
-* Changes the default location for newly created computer accounts that do not have another destination specified.
+* Sets the default location for newly created computer accounts.
 * Replace the example DN with the distinguished name of an existing OU.
-* This command does not move existing computer accounts.
+* Does not move existing computer accounts.
 
-Verify the current default location:
+To display the current default location:
 
 redircmp
 
 30. User Account Management
 
-Open User Accounts
+Open User Account Properties
 
 1. Open Server Manager → Tools → Active Directory Users and Computers.
-2. Select the required OU.
-3. Double-click a user account to open Properties.
+2. Navigate to the target OU.
+3. Double-click the user account.
+4. Open the Account tab.
 
-Account Properties
+Log On To
 
-Logon To
-
-1. Open the Account tab.
-2. Select Log On To.
-3. Choose All computers or The following computers.
-4. If restricted, add the permitted computer names.
-5. Select OK.
+1. Select Log On To.
+2. Choose one of the following:
+    * All computers
+    * The following computers
+3. If restricted, add the permitted computer names.
+4. Select OK.
 
 Purpose: Restricts the computers from which the user can sign in using domain credentials.
 
 Logon Hours
 
-1. Open the Account tab.
-2. Select Logon Hours.
-3. Select the permitted or denied time periods.
-4. Apply the changes and select OK.
+1. Select Logon Hours in the Account tab.
+2. Select the permitted or denied time periods.
+3. Apply the changes and select OK.
 
-Purpose: Defines the permitted logon schedule for the account. This setting does not automatically sign out a user who is already logged in.
+Purpose: Defines the permitted logon schedule for the account.
+
+Note: This setting does not automatically sign out a user who is already logged in.
 
 Manage User Accounts
 
-Right-click a user account in ADUC to access common actions:
+In Active Directory Users and Computers, right-click a user account to access these actions:
 
-* Enable/Disable Account: Allows or blocks account authentication.
-* Reset Password: Sets a new password.
-* Properties: Opens account configuration, including account restrictions and logon settings.
+* Enable/Disable Account: Enables or disables the account.
+* Reset Password: Resets the user’s password.
+* Properties: Opens account configuration and restrictions.
 * Move: Moves the user object to another OU or container.

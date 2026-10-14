@@ -1,6 +1,148 @@
 
 # Active Directory — Domain Deployment and Management
 
+Active Directory — Installation & Configuration
+
+01. Primary Domain Controller (PDC)
+
+Domain Controller (DC): A server responsible for authenticating users, managing accounts, and enforcing domain security policies.
+
+PDC Emulator: One of the five Flexible Single Master Operations (FSMO) roles in Active Directory. It handles tasks such as password change coordination and time synchronization within the domain.
+
+Note: In modern Active Directory, the PDC Emulator role is different from the historical Primary Domain Controller (PDC) concept used in Windows NT.
+
+02. Local Administrator
+
+Before installing Active Directory, sign in to the server using an account with local Administrator privileges.
+
+* Local Administrator: An account that belongs to a specific computer.
+* Domain Administrator: An account that belongs to the domain.
+* After the server is promoted to a Domain Controller, domain accounts and authentication are managed through the domain infrastructure.
+
+03. Configure Static IP
+
+A server that will function as a Domain Controller should use a static IP address or a DHCP reservation.
+
+Required settings:
+
+* IP Address
+* Subnet Mask / Prefix Length
+* Default Gateway
+* Preferred DNS Server
+
+Note: DNS configuration must match the network environment and installation stage. After the domain is established, the Domain Controller typically uses the internal domain DNS server.
+
+04. Rename the Server
+
+Before installing Active Directory, assign a suitable computer name based on the server’s role.
+
+Example:
+
+DC01
+
+Path:
+
+Server Manager → Local Server → Computer Name
+
+After changing the computer name, restart the server if prompted.
+
+05. Install Active Directory Domain Services (AD DS)
+
+Follow these steps to install the AD DS role:
+
+1. Open Server Manager.
+2. Select Manage → Add Roles and Features.
+3. Choose Role-based or feature-based installation.
+4. Select the destination server.
+5. Enable Active Directory Domain Services.
+6. Click Add Features when prompted.
+7. Continue through the wizard and click Install.
+
+Note: Installing the AD DS role alone does not make the server a Domain Controller. The server must also be promoted.
+
+06. DNS and Active Directory
+
+DNS (Domain Name System) translates names into IP addresses and helps clients locate network services.
+
+Active Directory relies on DNS records, especially SRV records, to locate Domain Controllers and other domain services.
+
+Important points:
+
+* Domain clients must use DNS servers that can resolve Active Directory domain records.
+* Incorrect DNS settings can prevent users from signing in or locating a Domain Controller.
+* In many deployments, the DNS Server role is installed and configured on the Domain Controller during AD DS promotion.
+
+07. Promote Server to Domain Controller
+
+After installing the AD DS role, follow these steps:
+
+1. Open Server Manager and click the AD DS notification.
+2. Select Promote this server to a domain controller.
+3. Choose the deployment operation:
+    * Add a new forest
+    * Add a domain controller to an existing domain
+    * Add a new domain to an existing forest
+4. Enter the domain name when prompted.
+5. Review the available functional level and DNS settings.
+6. Set the Directory Services Restore Mode (DSRM) password.
+7. Review the prerequisite checks.
+8. Click Install if the prerequisite checks pass.
+9. The server restarts automatically after the promotion process completes.
+
+Note: To create the first domain in a lab environment, the usual choice is Add a new forest.
+
+08. Verify Installation
+
+After the server restarts, verify the installation by checking the following:
+
+* Sign in using a domain account.
+* Confirm that Active Directory Users and Computers is available.
+* Confirm that DNS Manager is available.
+* Check the status of Active Directory and DNS services.
+* Verify that the required DNS records for the domain exist.
+* Confirm that the SYSVOL and NETLOGON shares are accessible.
+
+These checks help verify a successful installation. For a complete assessment, also check the health of the domain services and configuration.
+
+09. SAM vs. NTDS.dit
+
+SAM (Security Account Manager)
+
+* Stores information about local Windows accounts.
+* Maintains local account data and associated credential information.
+
+NTDS.dit
+
+* The primary Active Directory database.
+* Stores information about directory objects, including users, groups, computers, and other domain objects.
+
+After a server is promoted to a Domain Controller, domain directory information is stored in the Active Directory database.
+
+Note: NTDS.dit is not a direct replacement for the SAM database. These databases serve different purposes.
+
+10. DSRM — Directory Services Restore Mode
+
+Directory Services Restore Mode (DSRM) is a special startup mode used for Active Directory maintenance and recovery in specific situations.
+
+* The DSRM password is set during Domain Controller promotion.
+* The DSRM account is not used for normal domain user sign-in.
+* DSRM is intended for directory service maintenance and recovery scenarios.
+
+11. SYSVOL
+
+SYSVOL is a shared folder on Domain Controllers that contains files required to distribute domain policies and scripts.
+
+Important contents:
+
+* Group Policy Templates
+* User logon and logoff scripts
+* Files associated with domain policies
+
+Default path:
+
+C:\Windows\SYSVOL
+
+Note: SYSVOL is replicated between Domain Controllers in the domain. In modern Windows Server environments, Distributed File System Replication (DFSR) is the standard replication mechanism.
 ## 12. Additional Domain Controller (ADC)
 
 An Additional Domain Controller (ADC) provides redundancy and distributes directory services within an existing domain.

@@ -387,3 +387,166 @@ The last-domain-controller option is used when demoting the final Domain Control
 - Review dependencies, backups, DNS, and administrative access before proceeding.
 
 **Required privileges:** Membership in Enterprise Admins is typically required to remove the last Domain Controller of a domain in an existing forest.
+
+Active Directory — Domain Join & Computer Account Management
+
+25. Joining a Client to a Domain
+
+Procedure
+
+1. Log in to the client using a local administrator account.
+2. Open Settings → System → About.
+3. Select Domain or workgroup or open System Properties → Computer Name → Change.
+4. Select Domain and enter the domain FQDN (e.g., corp.example.com).
+5. Enter credentials authorized to join computers to the domain.
+6. Restart the client after the confirmation message.
+7. At the sign-in screen, select Other user and enter:
+
+CORP\username
+
+Or use the UPN format:
+
+username@corp.example.com
+
+Verification
+
+Open Command Prompt and run:
+
+whoami
+echo %logonserver%
+nltest /dsgetdc:corp.example.com
+
+* whoami displays the current sign-in identity.
+* %logonserver% displays the logon server for the current session.
+* nltest locates a Domain Controller for the specified domain.
+
+26. Pre-staging a Computer Account
+
+Procedure
+
+1. Open Server Manager → Tools → Active Directory Users and Computers.
+2. Navigate to the target OU.
+3. Right-click the OU → New → Computer.
+4. Enter the client computer name (e.g., PC-01).
+5. Select OK.
+6. On the client, join the domain using the same computer name and authorized credentials.
+
+Verification
+
+In ADUC, locate PC-01 in the target OU and verify that the computer account exists.
+
+27. Computer Account Management
+
+Reset Account
+
+1. Open Active Directory Users and Computers.
+2. Locate the computer account.
+3. Right-click the account → Reset Account.
+4. Confirm the operation when prompted.
+
+Note: Resetting the account can disrupt the existing secure channel. Do not use it as a routine troubleshooting step; follow the appropriate recovery procedure.
+
+Disable Account
+
+1. Open Active Directory Users and Computers.
+2. Locate the computer account.
+3. Right-click the account → Disable Account.
+4. Confirm the operation.
+
+To re-enable it, right-click the account and select Enable Account.
+
+Verification
+
+Run the following command in PowerShell on a machine with the Active Directory module and appropriate permissions:
+
+Get-ADComputer -Identity "PC-01" -Properties Enabled |
+Select-Object Name, Enabled
+
+* Enabled = True: The account is enabled.
+* Enabled = False: The account is disabled.
+
+28. Testing and Repairing the Secure Channel
+
+Test Secure Channel
+
+Run PowerShell as Administrator on a domain-joined client:
+
+Test-ComputerSecureChannel
+
+* True: The secure channel is working.
+* False: The secure channel may be broken.
+
+Repair Secure Channel
+
+Test-ComputerSecureChannel -Repair -Credential (Get-Credential)
+
+* Prompts for domain credentials and attempts to repair the secure channel.
+* Run only when troubleshooting a confirmed or suspected trust issue.
+
+Note: This cmdlet is intended for domain member computers, not Domain Controllers.
+
+29. Pre-staging Computer Accounts
+
+Why Create a Computer Account Before Domain Join?
+
+Pre-staging creates the computer object in Active Directory before the client joins the domain. This allows administrators to place it in the correct OU and prepare account permissions in advance.
+
+Create a Computer Account
+
+1. Open Server Manager → Tools → Active Directory Users and Computers.
+2. Select the target OU.
+3. Right-click → New → Computer.
+4. Enter the computer name (e.g., PC-01).
+5. Select OK.
+
+Set the Default Computer Container
+
+Run the following command on a Domain Controller in an elevated Command Prompt:
+
+redircmp "OU=Workstations,DC=corp,DC=example,DC=com"
+
+* Changes the default location for newly created computer accounts that do not have another destination specified.
+* Replace the example DN with the distinguished name of an existing OU.
+* This command does not move existing computer accounts.
+
+Verify the current default location:
+
+redircmp
+
+30. User Account Management
+
+Open User Accounts
+
+1. Open Server Manager → Tools → Active Directory Users and Computers.
+2. Select the required OU.
+3. Double-click a user account to open Properties.
+
+Account Properties
+
+Logon To
+
+1. Open the Account tab.
+2. Select Log On To.
+3. Choose All computers or The following computers.
+4. If restricted, add the permitted computer names.
+5. Select OK.
+
+Purpose: Restricts the computers from which the user can sign in using domain credentials.
+
+Logon Hours
+
+1. Open the Account tab.
+2. Select Logon Hours.
+3. Select the permitted or denied time periods.
+4. Apply the changes and select OK.
+
+Purpose: Defines the permitted logon schedule for the account. This setting does not automatically sign out a user who is already logged in.
+
+Manage User Accounts
+
+Right-click a user account in ADUC to access common actions:
+
+* Enable/Disable Account: Allows or blocks account authentication.
+* Reset Password: Sets a new password.
+* Properties: Opens account configuration, including account restrictions and logon settings.
+* Move: Moves the user object to another OU or container.

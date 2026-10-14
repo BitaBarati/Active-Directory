@@ -506,13 +506,30 @@ Test-ComputerSecureChannel -Repair -Credential (Get-Credential)
 * Use when troubleshooting a suspected domain trust issue.
 * Note: This cmdlet is intended for domain member computers, not Domain Controllers.
 
+Active Directory — Domain Join & Account Management
+
+28. Testing and Repairing the Secure Channel
+
+Test Secure Channel
+
+Run PowerShell as Administrator on a domain-joined client:
+
+Test-ComputerSecureChannel
+
+* True: The secure channel is working.
+* False: The secure channel may be broken.
+
+Repair Secure Channel
+
+Test-ComputerSecureChannel -Repair -Credential (Get-Credential)
+
+* Prompts for domain credentials and attempts to repair the secure channel.
+* Use when troubleshooting a suspected domain trust issue.
+* Note: This cmdlet is intended for domain member computers, not Domain Controllers.
+
 29. Pre-staging Computer Accounts
 
-Purpose
-
-Create a computer account in Active Directory before the client joins the domain.
-
-Procedure
+Create a Computer Account Before Domain Join
 
 1. Open Server Manager → Tools → Active Directory Users and Computers.
 2. Select the target Organizational Unit (OU).
@@ -546,9 +563,7 @@ Open User Account Properties
 Log On To
 
 1. Select Log On To.
-2. Choose one of the following:
-    * All computers
-    * The following computers
+2. Choose All computers or The following computers.
 3. If restricted, add the permitted computer names.
 4. Select OK.
 

@@ -387,4 +387,3 @@ The last-domain-controller option is used when demoting the final Domain Control
 - Review dependencies, backups, DNS, and administrative access before proceeding.
 
 **Required privileges:** Membership in Enterprise Admins is typically required to remove the last Domain Controller of a domain in an existing forest.
-.

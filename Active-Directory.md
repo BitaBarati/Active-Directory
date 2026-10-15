@@ -465,4 +465,90 @@ Select-Object Name, Enabled
 * Enabled = True: The account is enabled.
 * Enabled = False: The account is disabled.
 
+Active Directory — Domain Join & Account Management
+
+## 28. Testing and Repairing the Secure Channel
+
+Test Secure Channel
+
+Run PowerShell as Administrator on a domain-joined client:
+
+Test-ComputerSecureChannel
+
+* True: The secure channel is working.
+* False: The secure channel may be broken.
+
+Repair Secure Channel
+
+Test-ComputerSecureChannel -Repair -Credential (Get-Credential)
+
+* Prompts for domain credentials and attempts to repair the secure channel.
+* Use when troubleshooting a suspected domain trust issue.
+* Note: This cmdlet is intended for domain member computers, not Domain Controllers.
+
+⸻
+
+## 29. Pre-staging Computer Accounts
+
+Create a Computer Account Before Domain Join
+
+1. Open Server Manager → Tools → Active Directory Users and Computers.
+2. Select the target Organizational Unit (OU).
+3. Right-click the OU → New → Computer.
+4. Enter the computer name (e.g., PC-01).
+5. Select OK.
+
+Set the Default Computer Account Location
+
+Run the following command in an elevated Command Prompt on a Domain Controller:
+
+redircmp "OU=Workstations,DC=corp,DC=example,DC=com"
+
+* Sets the default location for newly created computer accounts.
+* Replace the example DN with the distinguished name of an existing OU.
+* Does not move existing computer accounts.
+
+Display the Current Default Location:
+
+redircmp
+
+⸻
+
+## 30. User Account Management
+
+Open User Account Properties
+
+1. Open Server Manager → Tools → Active Directory Users and Computers.
+2. Navigate to the target OU.
+3. Double-click the user account.
+4. Open the Account tab.
+
+Log On To
+
+1. Select Log On To.
+2. Choose All computers or The following computers.
+3. If restricted, add the permitted computer names.
+4. Select OK.
+
+Purpose: Restricts the computers from which the user can sign in using domain credentials.
+
+Logon Hours
+
+1. Select Logon Hours in the Account tab.
+2. Select the permitted or denied time periods.
+3. Apply the changes and select OK.
+
+Purpose: Defines the permitted logon schedule for the account.
+
+Note: This setting does not automatically sign out a user who is already logged in.
+
+Manage User Accounts
+
+In Active Directory Users and Computers, right-click a user account to access these actions:
+
+* Enable/Disable Account: Enables or disables the account.
+* Reset Password: Resets the user’s password.
+* Properties: Opens account configuration and restrictions.
+* Move: Moves the user object to another OU or container.
+
 

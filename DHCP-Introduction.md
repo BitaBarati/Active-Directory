@@ -484,12 +484,3 @@ Get-Service WsusService, W3SVC
 ```
 
 Checks the WSUS and IIS services when installed.
-
----
-
-## Notes
-
-- Replace example IP addresses, server names, and domain names with your lab values.
-- Run administrative PowerShell commands with the required permissions.
-- Verify cmdlet availability and configuration paths for your Windows Server version.
-- Test configuration and restore operations in a lab before using them in production.

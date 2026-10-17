@@ -571,4 +571,3 @@ PolicyPak is a third-party product that extends Group Policy-based configuration
 
 Review PolicyPak-specific logs and management tools for product-related errors.
 
-**Important:** PolicyPak is not a native Windows Server feature. Available capabilities, installation steps, and licensing depend on the product edition and version.
